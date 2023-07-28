@@ -1,1 +1,6 @@
 # prompts
+
+## Tests
+
+Run:
+```$ rspec```
