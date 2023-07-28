@@ -3,8 +3,10 @@
 
 # typed = true
 
-require_relative 'prompts/message'
+
+require 'sorbet-runtime'
 require_relative 'prompts/prompt'
+require_relative 'prompts/message'
 
 module Prompts
 

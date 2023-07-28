@@ -5,7 +5,7 @@
 #
 #   https://github.com/sorbet/sorbet-typed/edit/master/lib/yard/all/yard.rbi
 #
-# typed: strict
+# typed: true
 
 sig { returns(YARD::Logger) }
 def log; end
