@@ -4,16 +4,19 @@ module Prompts
   class FunctionParameter < T::Struct
     prop :name, Symbol
     prop :required, T::Boolean
+    prop :enum, T.nilable(T::Array[Symbol])
     prop :type, Symbol
     prop :description, String
 
     def to_hash
-      {
+      h = {
         name: name,
         required: required,
         type: type,
         description: description
       }
+      h[:enum] = enum unless enum.nil?
+      h
     end
   end
 
@@ -62,7 +65,7 @@ module Prompts
       def parameter(name_or_object, **kwargs)
         case name_or_object
         when Symbol
-          obj = FunctionParameter.new(name: name_or_object, required: kwargs[:required], type: kwargs[:type], description: kwargs[:description])
+          obj = FunctionParameter.new(name: name_or_object, enum: kwargs[:enum], required: kwargs[:required], type: kwargs[:type], description: kwargs[:description])
 
         when FunctionParameter
           obj = name_or_object

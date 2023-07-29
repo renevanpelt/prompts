@@ -166,7 +166,6 @@ describe Prompts::PromptBuilder do
   end
 end
 
-
 class SimpleParameterPrompt < Prompts::PromptBuilder
 
   system 'You respond in dutch, whatever language the user speaks in'
@@ -181,7 +180,7 @@ describe Prompts::PromptBuilder do
 
       p = SimpleParameterPrompt.new
       p.topic = 'the weather'
-      expected_hash = {:messages=>[{:role=>:system, :content=>"You respond in dutch, whatever language the user speaks in"}, {:role=>:user, :content=>"Tell me something about the weather"}], :functions => []}
+      expected_hash = { :messages => [{ :role => :system, :content => "You respond in dutch, whatever language the user speaks in" }, { :role => :user, :content => "Tell me something about the weather" }], :functions => [] }
 
       expect(p.to_prompt.to_hash).to eq(expected_hash)
 
@@ -189,10 +188,6 @@ describe Prompts::PromptBuilder do
 
   end
 end
-
-
-
-
 
 class WordCount < Prompts::Function
   name "word_count"
@@ -206,17 +201,13 @@ class MyWordCountFunctionPrompt < Prompts::PromptBuilder
   user 'How many words am I saying in this message?'
 end
 
-
-
-
-
 describe Prompts::PromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case with a function' do
 
       p = MyWordCountFunctionPrompt.new
-      expected_hash = {:messages=>[{:role=>:system, :content=>"You help me count words"}, {:role=>:user, :content=>"How many words am I saying in this message?"}], :functions=>[{:name=>:word_count, :description=>"Counts the number of words in a string", :parameters=>[{:name=>:string, :required=>true, :type=>:string, :description=>"A string containing words"}]}]}
+      expected_hash = { :messages => [{ :role => :system, :content => "You help me count words" }, { :role => :user, :content => "How many words am I saying in this message?" }], :functions => [{ :name => :word_count, :description => "Counts the number of words in a string", :parameters => { :type => :object, :properties => { :string => { :type => :string, :description => "A string containing words" } } } }] }
 
       expect(p.to_prompt.to_hash).to eq(expected_hash)
 
