@@ -38,7 +38,7 @@ module Prompts
       raise MissingParameterValueError unless missing_parameters(input_parameters).empty?
     end
 
-    def setter(param_name, value, sup)
+    private def setter(param_name, value, sup)
       param = self.class.parameters.find { |p| p[:label] == param_name }
       if param.nil?
         sup.call
@@ -47,7 +47,7 @@ module Prompts
       end
     end
 
-    def getter(param_name, sup)
+    private def getter(param_name, sup)
       param = self.class.parameters.find { |p| p[:label] == param_name }
       if param.nil?
         sup.call
@@ -56,7 +56,6 @@ module Prompts
       end
     end
 
-    # define setters for parameters
     def method_missing(method, *args, &block)
       if method[-1] == '='
         super unless args.length == 1
