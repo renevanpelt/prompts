@@ -1,9 +1,7 @@
 # frozen_string_literal: true
+# typed: true
 
-# typed = true
-
-class Parser
-
+class Prompts::Parser
   extend T::Sig
 
   sig { params(template: String).void }

@@ -1,3 +1,4 @@
+# typed: true
 module Prompts
 
   class FunctionParameter < Struct.new(:name, :required, :type, :description)
