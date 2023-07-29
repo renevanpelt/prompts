@@ -84,23 +84,23 @@ module Prompts
         @messages ||= []
       end
 
-      sig { params(message: String).void }
-      def system(message)
-        add_message(:system, message)
+      sig { params(content: String).void }
+      def system(content)
+        add_message(:system, content)
       end
 
-      sig { params(message: String).void }
-      def user(message)
-        add_message(:user, message)
+      sig { params(content: String).void }
+      def user(content)
+        add_message(:user, content)
       end
 
-      sig { params(message: String).void }
-      def agent(message)
-        add_message(:agent, message)
+      sig { params(content: String).void }
+      def agent(content)
+        add_message(:agent, content)
       end
 
-      sig { params(role: Symbol, message: String).void }
-      def add_message(role, message)
+      sig { params(role: Symbol, content: String).void }
+      def add_message(role, content)
         case role
         when :user
           klass = Prompts::UserMessage
@@ -111,9 +111,9 @@ module Prompts
         else
           raise StandardError, 'Invalid role'
         end
-        messages.push klass.new(message)
+        messages.push klass.new(content)
 
-        parsed_message = Parser.new(message)
+        parsed_message = Parser.new(content)
         parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
           parameter(param_name)
         end

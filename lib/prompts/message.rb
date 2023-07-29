@@ -6,14 +6,14 @@ module Prompts
   class Message
     extend T::Sig
 
-    attr_accessor :message
+    attr_accessor :content
     attr_accessor :parameter_requirements
 
-    sig { params(message: String).void }
-    def initialize(message)
+    sig { params(content: String).void }
+    def initialize(content)
       raise StandardError, 'Only child classes can be initialized' if self.instance_of?(Prompts::Message)
 
-      self.message = message
+      self.content = content
       self.parameter_requirements = []
     end
   end
