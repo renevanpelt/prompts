@@ -79,20 +79,18 @@ describe NameParser do
   it 'should have a parameter :full_name' do
     expect(NameParser.parameters.map{|a| a.to_hash}).to include({name: :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'"})
   end
-  
-  # it 'should have returns' do
-  #   expect(NameParser.returns).to eq([:first_name, :last_name, :initials])
-  # end
+
 end
 
 describe ExtractNameFields do
-  # it 'should have a function' do
-  #   expect(ExtractNameFields.function).to eq(NameParser)
-  # end
-  #
-  # it 'should have a parameter :full_name' do
-  #   expect(ExtractNameFields.parameters).to include({name: :full_name, type: :string, description: "The full name that is to be parsed"})
-  # end
+  it 'should have a function' do
+    expect(ExtractNameFields.functions.first).to eq(NameParser)
+    expect(ExtractNameFields.functions.count).to eq(1)
+  end
+
+  it 'should have a parameter :full_name' do
+    expect(ExtractNameFields.parameters).to include({label: :full_name, type: :string, description: "The full name that is to be parsed"})
+  end
 end
 
 describe 'invoke function' do
