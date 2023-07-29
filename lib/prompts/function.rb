@@ -1,7 +1,12 @@
 # typed: true
 module Prompts
 
-  class FunctionParameter < Struct.new(:name, :required, :type, :description)
+  class FunctionParameter < T::Struct
+    prop :name, String
+    prop :required, T::Boolean
+    prop :type, String # <- TODO is this correct?
+    prop :description, String
+
     def to_hash
       {
         name: name,
