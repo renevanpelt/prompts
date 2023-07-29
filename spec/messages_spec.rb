@@ -1,9 +1,9 @@
 require 'spec_helper'
 require_relative '../lib/prompts'
 
-describe Prompts::Message do
+describe Prompts::MessageBuilder do
   it 'should raise error when initialized directly' do
-    expect { Prompts::Message.new('Hello, world!') }.to raise_error(StandardError, 'Only child classes can be initialized')
+    expect { Prompts::MessageBuilder.new('Hello, world!') }.to raise_error(StandardError, 'Only child classes can be initialized')
   end
 end
 

@@ -5,7 +5,7 @@
 
 require 'sorbet-runtime'
 require_relative 'prompts/prompt_builder'
-require_relative 'prompts/message'
+require_relative 'prompts/message_builder'
 require_relative 'prompts/function'
 require_relative 'prompts/parser'
 require_relative 'prompts/prompt'
@@ -16,11 +16,11 @@ module Prompts
 
   class MissingParameterValueError < StandardError; end
 
-  class SystemMessage < Prompts::Message; end
+  class SystemMessage < Prompts::MessageBuilder; end
 
-  class UserMessage < Prompts::Message; end
+  class UserMessage < Prompts::MessageBuilder; end
 
-  class AgentMessage < Prompts::Message; end
+  class AgentMessage < Prompts::MessageBuilder; end
 
 end
 

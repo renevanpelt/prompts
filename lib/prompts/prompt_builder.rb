@@ -7,12 +7,15 @@ module Prompts
 
     attr_accessor :parameters
 
-
-
-
     def initialize
       super
       @parameters = {}
+    end
+
+    def parsed_messages
+      self.class.messages.map do |m|
+        m.parse(@parameters)
+      end
     end
 
     sig { returns(T::Array[Hash]) }
@@ -141,11 +144,9 @@ module Prompts
         end
       end
 
-
       def parameters
         @parameters ||= []
       end
-
 
       sig { params(name: Symbol, type: T.untyped, description: String).void }
       def parameter(name, type = :untyped, description = "")
