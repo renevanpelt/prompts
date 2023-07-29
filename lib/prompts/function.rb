@@ -1,4 +1,16 @@
 module Prompts
+
+  class FunctionParameter < Struct.new(:name, :required, :type, :description)
+    def to_hash
+      {
+        name: name,
+        required: required,
+        type: type,
+        description: description
+      }
+    end
+  end
+
   class Function
     @@names = [] # class variable to store names
 
@@ -18,6 +30,30 @@ module Prompts
       def internal_name
         @internal_name ||= snake_case(self.to_s.split('::').last).to_sym
       end
+
+      sig { params(description: String).returns(String) }
+      def description(description = nil)
+        @description = description if description
+        return @description
+      end
+
+      def parameters
+        @parameters ||= []
+      end
+
+      def parameter(name_or_object, **kwargs)
+        case name_or_object
+        when Symbol
+          obj = FunctionParameter.new(name_or_object, kwargs[:required], kwargs[:type], kwargs[:description])
+
+        when FunctionParameter
+          obj = name_or_object
+        else
+          raise InvalidParameterError, "Invalid parameter, must be a hash or a FunctionParameter object, got #{name_or_object.class}"
+        end
+        parameters << obj
+      end
+
 
       private
 
@@ -41,4 +77,6 @@ module Prompts
   class NameAlreadyTakenError < StandardError; end
 
   class InvalidNameFormatError < StandardError; end
+
+  class InvalidParameterError < StandardError; end
 end

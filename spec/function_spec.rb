@@ -52,3 +52,54 @@ describe '.new' do
     expect(instance).to be_a(Prompts::Function)
   end
 end
+
+
+class NameParser < Prompts::Function
+  name :name_parser
+  description "Parses a full name into first name, last name and initials."
+  parameter :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'"
+  # returns :first_name, :last_name, :initials
+end
+
+class ExtractNameFields < Prompts::PromptBuilder
+  function NameParser
+  parameter :full_name, :string, "The full name that is to be parsed"
+end
+
+
+
+
+
+describe NameParser do
+
+  it 'should have a description' do
+    expect(NameParser.description).to eq("Parses a full name into first name, last name and initials.")
+  end
+
+  it 'should have a parameter :full_name' do
+    expect(NameParser.parameters.map{|a| a.to_hash}).to include({name: :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'"})
+  end
+  
+  # it 'should have returns' do
+  #   expect(NameParser.returns).to eq([:first_name, :last_name, :initials])
+  # end
+end
+
+describe ExtractNameFields do
+  # it 'should have a function' do
+  #   expect(ExtractNameFields.function).to eq(NameParser)
+  # end
+  #
+  # it 'should have a parameter :full_name' do
+  #   expect(ExtractNameFields.parameters).to include({name: :full_name, type: :string, description: "The full name that is to be parsed"})
+  # end
+end
+
+describe 'invoke function' do
+  # it 'should return a result when invoked' do
+  #   prompt = ExtractNameFields.new
+  #   prompt.full_name = "John F. Doe"
+  #   result = prompt.invoke
+  #   expect(result).to eq({first_name: 'John', last_name: 'Doe', initials: 'JFD'})
+  # end
+end

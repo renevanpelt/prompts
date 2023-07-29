@@ -134,16 +134,26 @@ module Prompts
         end
       end
 
-      sig { params(name: Symbol, type: T.untyped, description: String).void }
-      def parameter(name, type = :untyped, description = "")
-        @parameters << { label: name, type: type, description: description }
-        define_method("#{name}=") do |value|
-          @parameters[name] = value
-        end
-      end
 
       def parameters
         @parameters ||= []
+      end
+
+
+      sig { params(name: Symbol, type: T.untyped, description: String).void }
+      def parameter(name, type = :untyped, description = "")
+        parameters << { label: name, type: type, description: description }
+        define_method("#{name}=") do |value|
+          parameters[name] = value
+        end
+      end
+
+      def functions
+        @functions ||= []
+      end
+
+      def function(function)
+        functions << function
       end
 
       sig { params(value: T.untyped).returns(Symbol) }
