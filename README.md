@@ -65,15 +65,18 @@ translate_to.invoke('Translate "Hello" to Spanish')
 
 # => MissingParameterValueError
 
-translate_to.parameters # => Returns an array of PromptParameter objects
-translate_to.parameters[0].label # => "target_language"
+translate_to.class.parameters # => Returns an array of PromptParameter objects
+translate_to.class.parameters[0].label # => "target_language"
 translate_to.parameters[0].value # => nil
 
-translate_to.missing_parameters == translate_to.parameters # => true
+translate_to.missing_parameters == translate_to.class.parameters # => true
 
 translate_to.target_language = 'Spanish'
 
 translate_to.invoke('Translate "Hello"')
+
+
+
 
 ```
 
