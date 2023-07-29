@@ -80,14 +80,82 @@ and replaced with the user input.
 
 ## Using functions
 
+Functions in the OpenAI API can be used in several ways:
+
+- Extracting structured data from unstructured text
+- Getting structured answers to human language queries
+- Giving the agent access to logic in the outside world
+
+# Using the model as a function
+
 ```ruby
 
 class NameParser < Prompts::Function
 
   name :name_parser # optional: can be generated based on class name
   description "Parses a full name into first name, last name and initials."
-  parameter :full_name, :string, "A string containing a full name, e.g. 'John F. Doe'"
+  
+  # Define a parameter on one line
+  parameter :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'"
+  
+  
+  returns :first_name, :last_name, :initials
+  # Or equivalently:
+  # parameter do
+  #   label: :full_name
+  #   required: true
+  #   type: :string
+  #   description: "A string containing a full name, e.g. 'John F. Doe'"
+  #   # default: nil
+  # end
+  
+end
 
+
+class ExtractNameFields < Prompts::PromptBuilder
+  
+  function NameParser
+  
+  system """
+        You are an agent that can 
+        be interacted with though 
+        natural language, but you 
+        in the structure of the arguments 
+        of the provided function
+        """
+  
+  user Function.invoke(full_name: "John F. Doe")
+  
+  system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}"
+  
+end
+
+prompt = ExtractNameFields.new
+
+prompt.invoke(NameParser.new(full_name: "John F. Doe"))
+
+```
+
+Or, equivalently:
+
+```ruby
+
+class ExtractNameFields < Prompts::PromptBuilder
+  
+  function NameParser
+
+  parameter :full_name, :string, "The full name that is to be parsed" # This is optional, but recommended.
+
+
+  system """
+        ...
+        """
+  
+  user Function.invoke(full_name: "John F. Doe")
+  system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}"
+  
+  user Function.invoke(full_name: full_name)
+  
 end
 
 
