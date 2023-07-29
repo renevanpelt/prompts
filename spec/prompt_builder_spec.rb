@@ -142,6 +142,7 @@ describe Prompts::PromptBuilder do
       p = SimpleOppositePrompt.new
 
       expected_hash = {
+        functions: [],
         messages: [
           {
             role: :system,
@@ -180,7 +181,7 @@ describe Prompts::PromptBuilder do
 
       p = SimpleParameterPrompt.new
       p.topic = 'the weather'
-      expected_hash = {:messages=>[{:role=>:system, :content=>"You respond in dutch, whatever language the user speaks in"}, {:role=>:user, :content=>"Tell me something about the weather"}]}
+      expected_hash = {:messages=>[{:role=>:system, :content=>"You respond in dutch, whatever language the user speaks in"}, {:role=>:user, :content=>"Tell me something about the weather"}], :functions => []}
 
       expect(p.to_prompt.to_hash).to eq(expected_hash)
 
@@ -190,3 +191,36 @@ describe Prompts::PromptBuilder do
 end
 
 
+
+
+
+class WordCount < Prompts::Function
+  name "word_count"
+  description "Counts the number of words in a string"
+  parameter :string, required: true, type: :string, description: "A string containing words", :functions => []
+end
+
+class MyWordCountFunctionPrompt < Prompts::PromptBuilder
+  function WordCount
+  system 'You help me count words'
+  user 'How many words am I saying in this message?'
+end
+
+
+
+
+
+describe Prompts::PromptBuilder do
+
+  describe '#to_hash' do
+    it 'should give a correct hash in a simple case with a function' do
+
+      p = MyWordCountFunctionPrompt.new
+      expected_hash = {:messages=>[{:role=>:system, :content=>"You help me count words"}, {:role=>:user, :content=>"How many words am I saying in this message?"}], :functions=>[{:name=>:word_count, :description=>"Counts the number of words in a string", :parameters=>[{:name=>:string, :required=>true, :type=>:string, :description=>"A string containing words"}]}]}
+
+      expect(p.to_prompt.to_hash).to eq(expected_hash)
+
+    end
+
+  end
+end

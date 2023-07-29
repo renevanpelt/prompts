@@ -14,6 +14,18 @@ module Prompts
   class Function
     @@names = [] # class variable to store names
 
+
+    def to_hash
+      {
+        name: self.class.internal_name,
+        description: self.class.description,
+        parameters: {
+          type: :object,
+          properties: self.class.parameters.map{|a| [a.name, { :type => a.type, :description => a.description }]}.to_h,
+        }
+      }
+    end
+
     class << self
       extend T::Sig
 
