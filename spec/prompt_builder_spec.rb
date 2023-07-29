@@ -46,7 +46,7 @@ describe Prompts::PromptBuilder do
     end
   end
 
-  describe '.assistantgit' do
+  describe '.assistant' do
     it 'stores agent prompts in order' do
       expect(translate_to_english.assistant_messages.count).to eq(2)
     end
