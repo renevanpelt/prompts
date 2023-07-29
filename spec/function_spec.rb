@@ -5,8 +5,8 @@ class TestFunctionWithName < Prompts::Function
 end
 
 class TestFunctionWithoutName < Prompts::Function; end
-class TestFunction < Prompts::Function; end
 
+class TestFunction < Prompts::Function; end
 
 describe Prompts::Function do
   describe '.name' do

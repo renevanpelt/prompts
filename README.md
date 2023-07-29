@@ -33,10 +33,10 @@ translate_prompt.invoke('Mijn naam is Pieter')
 
 ```
 
-
 ## Using parameters
 
-The example above defines a prompt that specifically translate any language input to english. This is not very useful. We can make it more useful by adding a parameter to the prompt.
+The example above defines a prompt that specifically translate any language input to english. This is not very useful.
+We can make it more useful by adding a parameter to the prompt.
 
 ```ruby
 
@@ -77,9 +77,8 @@ translate_to.invoke('Translate "Hello"')
 
 ```
 
-Note that we don't have to define the parameter in the user or agent messages. The parameter is automatically recognized and replaced with the user input.
-
-
+Note that we don't have to define the parameter in the user or agent messages. The parameter is automatically recognized
+and replaced with the user input.
 
 ```ruby
 

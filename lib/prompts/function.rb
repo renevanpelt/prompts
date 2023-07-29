@@ -2,9 +2,6 @@ module Prompts
   class Function
     @@names = [] # class variable to store names
 
-
-
-
     class << self
       extend T::Sig
 
@@ -27,8 +24,8 @@ module Prompts
       sig { params(str: String).returns(String) }
       def snake_case(str)
         str.gsub(/::/, '/')
-           .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-           .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+           .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+           .gsub(/([a-z\d])([A-Z])/, '\1_\2')
            .tr("-", "_")
            .downcase
       end
@@ -42,5 +39,6 @@ module Prompts
   end
 
   class NameAlreadyTakenError < StandardError; end
+
   class InvalidNameFormatError < StandardError; end
 end

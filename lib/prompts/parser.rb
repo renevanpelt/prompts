@@ -11,7 +11,6 @@ class Parser
     @template = template
   end
 
-
   sig { returns(T::Array[Symbol]) }
   def parameter_names
     @template.scan(/\{\{(.*?)\}\}/).flatten.map(&:strip).map(&:to_sym)

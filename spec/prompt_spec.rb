@@ -94,7 +94,6 @@ describe Prompts::Prompt do
     end
   end
 
-
   describe '.parameter' do
     it 'stores parameter information' do
       expect(translate_to.parameters).to include(an_object_having_attributes(label: 'language', type: :string, description: "The language to translate to."))

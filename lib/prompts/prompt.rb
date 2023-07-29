@@ -42,13 +42,13 @@ module Prompts
 
       sig { params(name: Symbol, default: T.untyped, block: T.proc.void).void }
       def with_parameter(name, default = nil, &block)
-        parameters << {name: name, default: default}
+        parameters << { name: name, default: default }
         self.instance_eval(&block)
       end
 
       sig { params(name: Symbol, type: T.untyped, description: String).void }
       def parameter(name, type, description)
-        @parameters << {name: name, type: type, description: description}
+        @parameters << { name: name, type: type, description: description }
       end
 
       def parameters
@@ -56,16 +56,14 @@ module Prompts
       end
 
       sig { params(value: T.untyped).returns(Symbol) }
-      def parse_parameter_value(value)
-
-      end
+      def parse_parameter_value(value) end
 
       sig { returns(T::Array[Hash]) }
       def missing_parameters
         parameters.select { |p| p[:value].nil? }
       end
 
-      end
+    end
 
     # define setters for parameters
     parameters.each do |param|
