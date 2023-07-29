@@ -5,4 +5,6 @@ source 'https://rubygems.org'
 gem 'rspec', :group => :development
 gem 'sorbet', :group => :development
 gem 'tapioca'
+gem "ruby-openai"
+
 gem 'sorbet-runtime'

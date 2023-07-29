@@ -5,7 +5,6 @@ class TestFunctionWithName < Prompts::Function
 end
 
 class TestFunctionWithoutName < Prompts::Function; end
-
 class TestFunction < Prompts::Function; end
 
 
