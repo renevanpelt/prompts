@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 # typed: true
 
+
 module Prompts
+
   class Prompt
     class << self
       extend T::Sig
@@ -9,7 +11,6 @@ module Prompts
       def messages
         @messages ||= []
       end
-
 
       sig { params(message: String).void }
       def system(message)
@@ -20,9 +21,9 @@ module Prompts
       def add_message(role, message)
         case role
         when :user
-          klass = UserMessage
+          klass = Prompts::UserMessage
         when :system
-          klass = SystemMessage
+          klass = Prompts::SystemMessage
         else
           raise StandardError, 'Invalid role'
         end

@@ -7,8 +7,11 @@
 require 'sorbet-runtime'
 require_relative 'prompts/prompt'
 require_relative 'prompts/message'
+require_relative 'prompts/function'
+
 
 module Prompts
+  class NameAlreadyTakenError < StandardError; end
 
   class SystemMessage < Prompts::Message
   end

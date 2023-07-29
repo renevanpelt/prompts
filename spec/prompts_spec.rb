@@ -15,7 +15,8 @@ describe Prompts::SystemMessage do
 
   it 'should be initialized with a message' do
     expect(MyPrompt.messages.first).to be_a(Prompts::SystemMessage)
-    expect(MyPrompt.messages.first.message).to eq('Hello, world!')
+    expect(MyPrompt.messages.first&.message).to eq('Hello, world!')
+
   end
 
 end
