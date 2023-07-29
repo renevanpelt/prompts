@@ -7,7 +7,7 @@ describe Prompts::Message do
   end
 end
 
-class MyPrompt < Prompts::Prompt
+class MyPrompt < Prompts::PromptBuilder
   system 'Hello, world!'
 end
 

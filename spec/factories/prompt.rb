@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory Prompts::Prompt do
+  factory Prompts::PromptBuilder do
 
   end
 end

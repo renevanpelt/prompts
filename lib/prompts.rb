@@ -4,7 +4,7 @@
 # typed = true
 
 require 'sorbet-runtime'
-require_relative 'prompts/prompt'
+require_relative 'prompts/prompt_builder'
 require_relative 'prompts/message'
 require_relative 'prompts/function'
 require_relative 'prompts/parser'

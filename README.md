@@ -9,11 +9,10 @@ Usage:
 ```ruby
 require 'prompts'
 
-
 # defining a prompt for translation
 
-class TranslateToEnglish < Prompts::Prompt
-  
+class TranslateToEnglish < Prompts::PromptBuilder
+
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'
   agent 'This is not the kind of question I am expecting.'
@@ -40,20 +39,19 @@ We can make it more useful by adding a parameter to the prompt.
 
 ```ruby
 
-class TranslateTo < Prompts::Prompt
-    
-    system 'You are a helpful assistant that translates any text to {{target_language}}.'
-    
-    with_parameter :target_language, "Spanish" do |language|
-        user 'Translate "hello"'
-        agent 'Hello'
-    end
-    
-    
-    user 'Translate "Hola"'
+class TranslateTo < Prompts::PromptBuilder
+
+  system 'You are a helpful assistant that translates any text to {{target_language}}.'
+
+  with_parameter :target_language, "Spanish" do |language|
+    user 'Translate "hello"'
     agent 'Hello'
-    
-    parameter :language, :string, "The language to translate to." # This is optional, but recommended.
+  end
+
+  user 'Translate "Hola"'
+  agent 'Hello'
+
+  parameter :language, :string, "The language to translate to." # This is optional, but recommended.
 
 end
 
