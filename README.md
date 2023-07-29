@@ -77,7 +77,6 @@ translate_to.invoke('Translate "Hello"')
 Note that we don't have to define the parameter in the user or agent messages. The parameter is automatically recognized
 and replaced with the user input.
 
-
 ## Using functions
 
 Functions in the OpenAI API can be used in several ways:
@@ -94,11 +93,10 @@ class NameParser < Prompts::Function
 
   name :name_parser # optional: can be generated based on class name
   description "Parses a full name into first name, last name and initials."
-  
+
   # Define a parameter on one line
   parameter :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'"
-  
-  
+
   returns :first_name, :last_name, :initials
   # Or equivalently:
   # parameter do
@@ -108,26 +106,25 @@ class NameParser < Prompts::Function
   #   description: "A string containing a full name, e.g. 'John F. Doe'"
   #   # default: nil
   # end
-  
+
 end
 
-
 class ExtractNameFields < Prompts::PromptBuilder
-  
+
   function NameParser
-  
-  system """
+
+  system "" "
         You are an agent that can 
         be interacted with though 
         natural language, but you 
         in the structure of the arguments 
         of the provided function
-        """
-  
+        " ""
+
   user Function.invoke(full_name: "John F. Doe")
-  
+
   system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}"
-  
+
 end
 
 prompt = ExtractNameFields.new
@@ -141,30 +138,38 @@ Or, equivalently:
 ```ruby
 
 class ExtractNameFields < Prompts::PromptBuilder
-  
+
   function NameParser
 
   parameter :full_name, :string, "The full name that is to be parsed" # This is optional, but recommended.
 
-
-  system """
+  system "" "
         ...
-        """
-  
-  user Function.invoke(full_name: "John F. Doe")
+        " ""
+
+  user NameParser.invoke(full_name: "John F. Doe")
   system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}"
-  
-  user Function.invoke(full_name: full_name)
-  
+
+  user NameParser.invoke(full_name: full_name)
+
+  # Or equivalently, to prevent name clashes
+  # user Function.invoke(full_name: :full_name)
+
 end
 
+prompt = ExtractNameFields.new
+
+prompt.full_name = "John F. Doe"
+
+prompt.invoke
 
 ```
 
+In the last example, we made the last user message dependent on the `full_name` parameter.
 
 ## Tests
-```$ rspec```
 
+```$ rspec```
 
 ## Future development
 
