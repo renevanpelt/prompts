@@ -76,6 +76,11 @@ module Prompts
       end
 
 
+      def validate(arguments)
+        !parameters.select{|a| a.required }.select{|a| arguments.has_key?(a.name) }.any?
+      end
+
+
       private
 
       sig { params(str: String).returns(String) }

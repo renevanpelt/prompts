@@ -121,16 +121,18 @@ We created the function and provided it to our beautifully named `FunctionCallFo
 We will now build the prompt, by providing a location through the dynamic `location` setter.
 ```ruby
 
-@function_call_builder = FunctionCallForCurrentWeather.new
+@function_call_builder = FunctionCallForWeather.new
 @function_call_builder.location = "Paris, France"
 
 @prompt = @function_call_builder.to_prompt
 
-# => Display the output 
+# => #<Prompts::Prompt:0x0000000104508020>
+
 
 @prompt.to_hash
 
-# => Display the output
+# => {:messages=>[{:role=>:system, :content=>"Tell me what the current weather is in Paris, France"}], :functions=>[{:name=>:get_current_weather, :description=>"Gets the current weather for a given location.", :parameters=>{:type=>:object, :properties=>{:location=>{:type=>:string, :description=>"A string containing a location, e.g. 'Amsterdam'"}, :unit=>{:type=>:string, :description=>"The unit of temperature to return the weather in. Infer this from the users location"}}}}]}
+
 
 ```
 
@@ -153,30 +155,66 @@ response = client.chat(
   })
 
 puts response
-
-# => Display the output
-
-
 ```
 
+Which renders the following response
+
+```json
+{
+  "id": "chatcmpl-7hnJW7JgsnAoEiTg1AXi7YEqKdWQf",
+  "object": "chat.completion",
+  "created": 1690672022,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "function_call": {
+          "name": "get_current_weather",
+          "arguments": "{\n  \"location\": \"Paris, France\"\n}"
+        }
+      },
+      "finish_reason": "function_call"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 93,
+    "completion_tokens": 18,
+    "total_tokens": 111
+  }
+}
+```
 
 We then use the response get information from our external API
 
+
+
 ```ruby
+
 
 class ExternalWeatherMockAPI
   def self.response(location, unit)
-    { temperature: Math.rand(0..30), rain_chance: "10%", unit: unit, location: location}
+    { temperature: rand(0..30), rain_chance: "10%", unit: unit, location: location}
   end
 end
 
-
-response = response.dig(:choices, 1)
-if response["finish_reason"] == "function_call" && GetCurrentWeather.validate(response["arguments"])
-  api_response = ExternalWeatherMockAPI.response(response["arguments"]["location"], response["arguments"]["unit"])
+response = JSON.parse(response.to_s)
+response = response.dig("choices", 0)
+if response["finish_reason"] == "function_call"
+  arguments = JSON.parse response["message"]["function_call"]["arguments"]
 else
   puts "We expected a function call here, but got something else."
 end
+
+if GetCurrentWeather.validate(arguments)
+  api_response = ExternalWeatherMockAPI.response(arguments["location"], arguments["unit"])
+else
+  puts "The arguments were not valid"
+end
+
+
 
 ```
 
@@ -185,10 +223,11 @@ Now we define a PropmtBuilder that uses the response from the API to build a res
 
 ```ruby
 
+
 class CurrentWeather < Prompts::PromptBuilder
-  
+
   parameter :api_response, :hash, "The response from the external API"
-  
+
   system "You give the user the current weather given a raw response from an external API."
   system "API Response: {{api_response}}"
 
@@ -197,8 +236,8 @@ end
 current_weather_builder = CurrentWeather.new
 current_weather_builder.api_response = api_response
 
-hash = current_weather_builder.to_prompt.to_hash
 
+hash = current_weather_builder.to_prompt.to_hash
 
 
 ```
@@ -207,19 +246,18 @@ Again, we do an API call
 
 
 ```ruby
-
 response = client.chat(
   parameters: {
     model: "gpt-3.5-turbo",
     messages: hash[:messages],
-    functions: hash[:functions],
     temperature: 0.7,
   })
 
-puts response
+response = JSON.parse(response.to_s)
+puts response = response.dig("choices", 0, "message", "content")
 
+# => The current weather in Paris, France is 7 degrees Celsius with a 10% chance of rain.
 
-# => Display the output
 ```
 
 
