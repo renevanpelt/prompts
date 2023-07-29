@@ -2,7 +2,7 @@
 module Prompts
 
   class FunctionParameter < T::Struct
-    prop :name, String
+    prop :name, Symbol
     prop :required, T::Boolean
     prop :type, String # <- TODO WM to Rene: is this type correct?
     prop :description, String
@@ -37,7 +37,7 @@ module Prompts
         @internal_name ||= snake_case(self.to_s.split('::').last).to_sym
       end
 
-      sig { params(description: String).returns(String) }
+      sig { params(description: T.nilable(String)).returns(String) }
       def description(description = nil)
         @description = description if description
         return @description
@@ -50,7 +50,7 @@ module Prompts
       def parameter(name_or_object, **kwargs)
         case name_or_object
         when Symbol
-          obj = FunctionParameter.new(name_or_object, kwargs[:required], kwargs[:type], kwargs[:description])
+          obj = FunctionParameter.new(name: name_or_object, required: kwargs[:required], type: kwargs[:type], description: kwargs[:description])
 
         when FunctionParameter
           obj = name_or_object
