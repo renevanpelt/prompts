@@ -149,6 +149,14 @@ module Prompts
       sig { params(value: T.untyped).returns(Symbol) }
       def parse_parameter_value(value) end
 
+      def method_missing(method, *args, &block)
+        parameters.find { |a| a[:label] == method.to_sym } || super
+      end
+
+      def respond_to_missing?(method, include_all = false)
+        parameters.any? { |a| a[:label] == method.to_sym } || super
+      end
+
     end
 
   end

@@ -101,4 +101,14 @@ describe Prompts::PromptBuilder do
     end
   end
 
+  describe '.[parameter_name]' do
+    it 'returns parameter hash when the correct one is called' do
+      expect(translate_to.class.foo).to eq({ label: :foo, type: :string, description: "A description for foo." })
+    end
+
+    it 'doesnt respond when method name is not a parameter label' do
+      expect { translate_to.class.bar }.to raise_error(NoMethodError)
+    end
+  end
+
 end
