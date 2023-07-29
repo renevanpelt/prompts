@@ -16,11 +16,23 @@ module Prompts
 
   class MissingParameterValueError < StandardError; end
 
-  class SystemMessage < Prompts::MessageBuilder; end
+  class SystemMessage < Prompts::MessageBuilder;
+    def role
+      :system
+    end
+  end
 
-  class UserMessage < Prompts::MessageBuilder; end
+  class UserMessage < Prompts::MessageBuilder
+    def role
+      :user
+    end
+  end
 
-  class AgentMessage < Prompts::MessageBuilder; end
+  class AgentMessage < Prompts::MessageBuilder
+    def role
+      :agent
+    end
+  end
 
 end
 

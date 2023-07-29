@@ -19,8 +19,6 @@ class TranslateTo < Prompts::PromptBuilder
   parameter :foo, :string, "A description for foo."
 end
 
-
-
 class Translate < Prompts::PromptBuilder
 
 end
@@ -113,8 +111,6 @@ describe Prompts::PromptBuilder do
     end
   end
 
-
-
   describe '#to_prompt' do
     it 'returns a prompt object' do
       translate_to.target_language = 'Spanish'
@@ -126,8 +122,46 @@ describe Prompts::PromptBuilder do
 
       expect { translate_to.to_prompt }.to raise_error(Prompts::MissingParameterValueError)
     end
+
   end
 end
 
+class SimpleOppositePrompt < Prompts::PromptBuilder
+
+  system 'You tell the opposite of what people are saying.'
+  user 'The sun is round'
+  system 'the sun is a square'
+
+end
+
+describe Prompts::PromptBuilder do
+
+  describe '#to_hash' do
+    it 'should give a correct hash in a simple case' do
+
+      p = SimpleOppositePrompt.new
+
+      expect(p.to_prompt.to_hash).to eq({
+                                          messages: [
+                                            {
+                                              role: :system,
+                                              content: 'You tell the opposite of what people are saying.'
+                                            },
+                                            {
+                                              role: :user,
+                                              content: 'The sun is round'
+                                            },
+                                            {
+                                              role: :system,
+                                              content: 'the sun is a square'
+                                            }
+
+                                          ]
+                                        })
+
+    end
+
+  end
+end
 
 

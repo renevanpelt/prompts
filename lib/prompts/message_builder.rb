@@ -4,7 +4,14 @@
 
 module Prompts
 
-
+  class Message < Struct.new(:role, :content)
+    def to_hash
+      {
+        role: role,
+        content: content
+      }
+    end
+  end
 
   class MessageBuilder
     extend T::Sig
@@ -18,7 +25,6 @@ module Prompts
       self.content = content
       self.parameter_requirements = []
     end
-
 
     sig { params(parameters: T::Hash[Symbol, String]).returns(String) }
     def parse(parameters)

@@ -13,24 +13,22 @@ module Prompts
     end
 
     def parsed_messages
-      self.class.messages.map do |m|
-        m.parse(@parameters)
-      end
+      self.class.message_builders.map{ |m| Prompts::Message.new(role: m.role, content: m.parse(parameters)) }
     end
 
     sig { returns(T::Array[Hash]) }
     def system_messages
-      self.class.messages.select { |m| m.is_a?(Prompts::SystemMessage) }
+      self.class.message_builders.select { |m| m.is_a?(Prompts::SystemMessage) }
     end
 
     sig { returns(T::Array[Hash]) }
     def user_messages
-      self.class.messages.select { |m| m.is_a?(Prompts::UserMessage) }
+      self.class.message_builders.select { |m| m.is_a?(Prompts::UserMessage) }
     end
 
     sig { returns(T::Array[Hash]) }
     def agent_messages
-      self.class.messages.select { |m| m.is_a?(Prompts::AgentMessage) }
+      self.class.message_builders.select { |m| m.is_a?(Prompts::AgentMessage) }
     end
 
     sig { params(input_parameters: T::Hash[Symbol, String]).returns(T::Array[Hash]) }
@@ -90,7 +88,7 @@ module Prompts
     class << self
       extend T::Sig
 
-      def messages
+      def message_builders
         @messages ||= []
       end
 
@@ -121,7 +119,7 @@ module Prompts
         else
           raise StandardError, 'Invalid role'
         end
-        messages.push klass.new(content)
+        message_builders.push klass.new(content)
 
         parsed_message = Parser.new(content)
         parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
