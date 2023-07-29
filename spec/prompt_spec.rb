@@ -1,13 +1,5 @@
 require 'spec_helper'
 
-class Translate < Prompts::Prompt
-  system 'You are a helpful assistant that translates any text to English.'
-  user 'Translate "hello" to Spanish.'
-  agent 'This is not the kind of question I am expecting.'
-  user 'Translate "Hola"'
-  agent 'Hello'
-end
-
 class TranslateToEnglish < Prompts::Prompt
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'
@@ -24,17 +16,20 @@ class TranslateTo < Prompts::Prompt
   end
   user 'Translate "Hola"'
   agent 'Hello'
-  parameter :language, :string, "The language to translate to."
+  parameter :foo, :string, "A description for foo."
 end
 
+class Translate < Prompts::Prompt
+
+end
 
 describe Prompts::Prompt do
-  let(:translate_prompt) { Translate.new }
+  let(:translate_to_english) { TranslateToEnglish.new }
   let(:translate_to) { TranslateTo.new }
 
   describe '.system' do
     it 'stores system prompt' do
-      expect(translate_prompt.system_messages.count).to eq(1)
+      expect(translate_to_english.system_messages.count).to eq(1)
     end
 
     context 'when parameters are present' do
@@ -46,20 +41,20 @@ describe Prompts::Prompt do
 
   describe '.user' do
     it 'stores user prompts in order' do
-      expect(translate_prompt.user_messages.count).to eq(2)
+      expect(translate_to_english.user_messages.count).to eq(2)
 
     end
   end
 
   describe '.agent' do
     it 'stores agent prompts in order' do
-      expect(translate_prompt.agent_messages.count).to eq(2)
+      expect(translate_to_english.agent_messages.count).to eq(2)
     end
   end
 
   describe '#invoke' do
     it 'responds to invoke method' do
-      expect(translate_prompt).to respond_to(:invoke)
+      expect(translate_to_english).to respond_to(:invoke)
     end
 
     context 'when parameters are required' do
@@ -82,7 +77,7 @@ describe Prompts::Prompt do
 
   describe '.parameter' do
     it 'stores parameter information' do
-      expect(translate_to.class.parameters).to include({label: :language, type: :string, description: "The language to translate to."})
+      expect(translate_to.class.parameters).to include({ label: :foo, type: :string, description: "A description for foo." })
     end
   end
 
@@ -99,11 +94,10 @@ describe Prompts::Prompt do
 
     it 'returns empty array when all parameters are present' do
       translate_to.target_language = 'Spanish'
-      expect(translate_to.missing_parameters).to eq([{:label=>:language, :type=>:string, :description=>"The language to translate to."}])
+      expect(translate_to.missing_parameters).to eq([{ :label => :foo, :type => :string, :description => "A description for foo." }])
 
-      translate_to.language = 'English'
+      translate_to.foo = 'Bar'
       expect(translate_to.missing_parameters).to eq([])
-
     end
   end
 
