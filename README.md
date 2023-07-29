@@ -72,14 +72,26 @@ translate_to.missing_parameters == translate_to.class.parameters # => true
 translate_to.target_language = 'Spanish'
 
 translate_to.invoke('Translate "Hello"')
-
-
-
-
 ```
 
 Note that we don't have to define the parameter in the user or agent messages. The parameter is automatically recognized
 and replaced with the user input.
+
+
+## Using functions
+
+```ruby
+
+class NameParser < Prompts::Function
+
+  name :name_parser # optional: can be generated based on class name
+  description "Parses a full name into first name, last name and initials."
+  parameter :full_name, :string, "A string containing a full name, e.g. 'John F. Doe'"
+
+end
+
+
+```
 
 
 ## Tests
