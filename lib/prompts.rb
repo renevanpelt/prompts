@@ -1,7 +1,5 @@
-# typed: false
 # frozen_string_literal: true
-
-# typed = true
+# typed: false
 
 require 'sorbet-runtime'
 require_relative 'prompts/prompt_builder'
