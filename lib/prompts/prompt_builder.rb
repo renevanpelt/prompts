@@ -7,6 +7,9 @@ module Prompts
 
     attr_accessor :parameters
 
+
+
+
     def initialize
       super
       @parameters = {}
@@ -75,6 +78,10 @@ module Prompts
         param_name = method
         self.class.parameters.any? { |param| param[:label] == param_name } || super
       end
+    end
+
+    def to_prompt
+      Prompts::Prompt.new(self)
     end
 
     class << self

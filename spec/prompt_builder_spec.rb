@@ -19,6 +19,8 @@ class TranslateTo < Prompts::PromptBuilder
   parameter :foo, :string, "A description for foo."
 end
 
+
+
 class Translate < Prompts::PromptBuilder
 
 end
@@ -111,4 +113,21 @@ describe Prompts::PromptBuilder do
     end
   end
 
+
+
+  describe '#to_prompt' do
+    it 'returns a prompt object' do
+      translate_to.target_language = 'Spanish'
+      translate_to.foo = 'Bar'
+      expect(translate_to.to_prompt).to be_a(Prompts::Prompt)
+    end
+
+    it 'raises error when missing parameters' do
+
+      expect { translate_to.to_prompt }.to raise_error(Prompts::MissingParameterValueError)
+    end
+  end
 end
+
+
+
