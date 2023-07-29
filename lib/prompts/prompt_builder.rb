@@ -27,8 +27,8 @@ module Prompts
     end
 
     sig { returns(T::Array[Hash]) }
-    def agent_messages
-      self.class.message_builders.select { |m| m.is_a?(Prompts::AgentMessage) }
+    def assistant_messages
+      self.class.message_builders.select { |m| m.is_a?(Prompts::AssistantMessage) }
     end
 
     sig { params(input_parameters: T::Hash[Symbol, String]).returns(T::Array[Hash]) }
@@ -103,8 +103,8 @@ module Prompts
       end
 
       sig { params(content: String).void }
-      def agent(content)
-        add_message(:agent, content)
+      def assistant(content)
+        add_message(:assistant, content)
       end
 
       sig { params(role: Symbol, content: String).void }
@@ -114,8 +114,8 @@ module Prompts
           klass = Prompts::UserMessage
         when :system
           klass = Prompts::SystemMessage
-        when :agent
-          klass = Prompts::AgentMessage
+        when :assistant
+          klass = Prompts::AssistantMessage
         else
           raise StandardError, 'Invalid role'
         end

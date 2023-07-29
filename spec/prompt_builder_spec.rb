@@ -3,19 +3,19 @@ require 'spec_helper'
 class TranslateToEnglish < Prompts::PromptBuilder
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'
-  agent 'This is not the kind of question I am expecting.'
+  assistant 'This is not the kind of question I am expecting.'
   user 'Translate "Hola"'
-  agent 'Hello'
+  assistant 'Hello'
 end
 
 class TranslateTo < Prompts::PromptBuilder
   system 'You are a helpful assistant that translates any text to {{target_language}}.'
   with_parameter :target_language, "Spanish" do |language|
     user 'Translate "hello"'
-    agent 'Hello'
+    assistant 'Hello'
   end
   user 'Translate "Hola"'
-  agent 'Hello'
+  assistant 'Hello'
   parameter :foo, :string, "A description for foo."
 end
 
@@ -46,9 +46,9 @@ describe Prompts::PromptBuilder do
     end
   end
 
-  describe '.agent' do
+  describe '.assistantgit' do
     it 'stores agent prompts in order' do
-      expect(translate_to_english.agent_messages.count).to eq(2)
+      expect(translate_to_english.assistant_messages.count).to eq(2)
     end
   end
 

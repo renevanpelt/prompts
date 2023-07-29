@@ -26,9 +26,9 @@ module Prompts
     end
   end
 
-  class AgentMessage < Prompts::MessageBuilder
+  class AssistantMessage < Prompts::MessageBuilder
     def role
-      :agent
+      :assistant
     end
   end
 
