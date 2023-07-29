@@ -141,23 +141,48 @@ describe Prompts::PromptBuilder do
 
       p = SimpleOppositePrompt.new
 
-      expect(p.to_prompt.to_hash).to eq({
-                                          messages: [
-                                            {
-                                              role: :system,
-                                              content: 'You tell the opposite of what people are saying.'
-                                            },
-                                            {
-                                              role: :user,
-                                              content: 'The sun is round'
-                                            },
-                                            {
-                                              role: :system,
-                                              content: 'the sun is a square'
-                                            }
+      expected_hash = {
+        messages: [
+          {
+            role: :system,
+            content: 'You tell the opposite of what people are saying.'
+          },
+          {
+            role: :user,
+            content: 'The sun is round'
+          },
+          {
+            role: :system,
+            content: 'the sun is a square'
+          }
 
-                                          ]
-                                        })
+        ]
+      }
+      expect(p.to_prompt.to_hash).to eq(expected_hash)
+
+    end
+
+  end
+end
+
+
+class SimpleParameterPrompt < Prompts::PromptBuilder
+
+  system 'You respond in dutch, whatever language the user speaks in'
+  user 'Tell me something about {{topic}}'
+
+end
+
+describe Prompts::PromptBuilder do
+
+  describe '#to_hash' do
+    it 'should give a correct hash in a simple case with parameters' do
+
+      p = SimpleParameterPrompt.new
+      p.topic = 'the weather'
+      expected_hash = {:messages=>[{:role=>:system, :content=>"You respond in dutch, whatever language the user speaks in"}, {:role=>:user, :content=>"Tell me something about the weather"}]}
+
+      expect(p.to_prompt.to_hash).to eq(expected_hash)
 
     end
 
