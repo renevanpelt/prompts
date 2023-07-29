@@ -81,11 +81,8 @@ translate_to.invoke('Translate "Hello"')
 Note that we don't have to define the parameter in the user or agent messages. The parameter is automatically recognized
 and replaced with the user input.
 
-```ruby
 
 ## Tests
-
-Run:
 ```$ rspec```
 
 
