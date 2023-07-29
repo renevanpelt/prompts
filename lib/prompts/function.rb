@@ -4,7 +4,7 @@ module Prompts
   class FunctionParameter < T::Struct
     prop :name, String
     prop :required, T::Boolean
-    prop :type, String # <- TODO is this correct?
+    prop :type, String # <- TODO WM to Rene: is this type correct?
     prop :description, String
 
     def to_hash

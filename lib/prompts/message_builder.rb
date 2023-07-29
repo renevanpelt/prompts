@@ -3,7 +3,9 @@
 
 module Prompts
 
-  class Message < Struct.new(:role, :content)
+  class Message < T::Struct
+    prop :role, T.anything
+    prop :content, T.anything
     def to_hash
       {
         role: role,
