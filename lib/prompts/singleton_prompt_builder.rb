@@ -159,20 +159,20 @@ module Prompts
         end
 
       end
-
-      sig { params(label: Symbol, value: String, block: T.proc.void).void }
-      def with_parameter(label, value, &block)
-        # parameters << { name: name, default: default }
-        temp_messages = @messages # Store existing messages
-        @messages = [] # Reset @messages for capturing the ones inside the block
-        self.instance_eval(&block)
-        parameter_messages = @messages # These are the messages inside the block
-        @messages = temp_messages # Restore existing messages
-        parameter_messages.each do |message|
-          message.parameter_requirements << { label: label, value: value }
-          @messages << message
-        end
-      end
+      #
+      # sig { params(label: Symbol, value: String, block: T.proc.void).void }
+      # def with_parameter(label, value, &block)
+      #   # parameters << { name: name, default: default }
+      #   temp_messages = @messages # Store existing messages
+      #   @messages = [] # Reset @messages for capturing the ones inside the block
+      #   self.instance_eval(&block)
+      #   parameter_messages = @messages # These are the messages inside the block
+      #   @messages = temp_messages # Restore existing messages
+      #   parameter_messages.each do |message|
+      #     message.parameter_requirements << { label: label, value: value }
+      #     @messages << message
+      #   end
+      # end
 
       def parameters
         builder.parameters
