@@ -1,10 +1,8 @@
 # typed: true
 module Prompts
 
-
   class Function
     @@names = [] # class variable to store names
-
 
     def to_hash
       {
@@ -12,7 +10,7 @@ module Prompts
         description: self.class.description,
         parameters: {
           type: :object,
-          properties: self.class.parameters.map{|a| [a.name, { :type => a.type, :description => a.description }]}.to_h,
+          properties: self.class.parameters.map { |a| [a.name, { :type => a.type, :description => a.description }] }.to_h,
         }
       }
     end
@@ -57,11 +55,9 @@ module Prompts
         parameters << obj
       end
 
-
       def validate(arguments)
-        !parameters.select{|a| a.required }.select{|a| arguments.has_key?(a.name) }.any?
+        !parameters.select { |a| a.required }.select { |a| arguments.has_key?(a.name) }.any?
       end
-
 
       private
 
