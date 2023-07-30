@@ -15,7 +15,7 @@ class Prompts::NonDeterministicFunction < Prompts::Function
 
     def returns *fields
       fields.each do |field|
-        return_fields << field
+        return_fields << Prompts::FunctionReturnValue.new(field)
       end
     end
 

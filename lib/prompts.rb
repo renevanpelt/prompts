@@ -18,7 +18,7 @@ module Prompts
 
   class MissingParameterValueError < StandardError; end
 
-  class SystemMessage < Prompts::MessageBuilder;
+  class SystemMessage < Prompts::MessageBuilder
     def role
       :system
     end

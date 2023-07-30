@@ -1,9 +1,5 @@
 
-class Prompts::FunctionReturnValue
+class Prompts::FunctionReturnValue < Struct.new(:name, :type)
 
-  def initialize(value, type: :string)
-    @value = value
-    @type = type
-  end
 
 end
