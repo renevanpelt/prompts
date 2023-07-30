@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class TranslateToEnglish < Prompts::PromptBuilder
+class TranslateToEnglish < Prompts::SingletonPromptBuilder
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'
   assistant 'This is not the kind of question I am expecting.'
@@ -8,7 +8,7 @@ class TranslateToEnglish < Prompts::PromptBuilder
   assistant 'Hello'
 end
 
-class TranslateTo < Prompts::PromptBuilder
+class TranslateTo < Prompts::SingletonPromptBuilder
   system 'You are a helpful assistant that translates any text to {{target_language}}.'
   with_parameter :target_language, "Spanish" do |language|
     user 'Translate "hello"'
@@ -19,11 +19,11 @@ class TranslateTo < Prompts::PromptBuilder
   parameter :foo, :string, "A description for foo."
 end
 
-class Translate < Prompts::PromptBuilder
+class Translate < Prompts::SingletonPromptBuilder
 
 end
 
-describe Prompts::PromptBuilder do
+describe Prompts::SingletonPromptBuilder do
   let(:translate_to_english) { TranslateToEnglish.new }
   let(:translate_to) { TranslateTo.new }
 
@@ -126,7 +126,7 @@ describe Prompts::PromptBuilder do
   end
 end
 
-class SimpleOppositePrompt < Prompts::PromptBuilder
+class SimpleOppositePrompt < Prompts::SingletonPromptBuilder
 
   system 'You tell the opposite of what people are saying.'
   user 'The sun is round'
@@ -134,7 +134,7 @@ class SimpleOppositePrompt < Prompts::PromptBuilder
 
 end
 
-describe Prompts::PromptBuilder do
+describe Prompts::SingletonPromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case' do
@@ -166,14 +166,14 @@ describe Prompts::PromptBuilder do
   end
 end
 
-class SimpleParameterPrompt < Prompts::PromptBuilder
+class SimpleParameterPrompt < Prompts::SingletonPromptBuilder
 
   system 'You respond in dutch, whatever language the user speaks in'
   user 'Tell me something about {{topic}}'
 
 end
 
-describe Prompts::PromptBuilder do
+describe Prompts::SingletonPromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case with parameters' do
@@ -195,13 +195,13 @@ class WordCount < Prompts::Function
   parameter :string, required: true, type: :string, description: "A string containing words", :functions => []
 end
 
-class MyWordCountFunctionPrompt < Prompts::PromptBuilder
+class MyWordCountFunctionPrompt < Prompts::SingletonPromptBuilder
   function WordCount
   system 'You help me count words'
   user 'How many words am I saying in this message?'
 end
 
-describe Prompts::PromptBuilder do
+describe Prompts::SingletonPromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case with a function' do

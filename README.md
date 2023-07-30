@@ -10,7 +10,7 @@ require 'prompts'
 
 # defining a prompt for translation
 
-class TranslateToEnglish < Prompts::PromptBuilder
+class TranslateToEnglish < Prompts::SingletonPromptBuilder
 
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'
@@ -38,7 +38,7 @@ We can make it more useful by adding a parameter to the prompt.
 
 ```ruby
 
-class TranslateTo < Prompts::PromptBuilder
+class TranslateTo < Prompts::SingletonPromptBuilder
 
   system 'You are a helpful assistant that translates any text to {{target_language}}.'
 
@@ -221,7 +221,7 @@ Now we define a PropmtBuilder that uses the response from the API to build a res
 ```ruby
 
 
-class CurrentWeather < Prompts::PromptBuilder
+class CurrentWeather < Prompts::SingletonPromptBuilder
 
   parameter :api_response, :hash, "The response from the external API"
 

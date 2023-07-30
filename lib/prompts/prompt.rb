@@ -7,7 +7,7 @@ module Prompts
 
     extend T::Sig
 
-    sig { params(prompt_builder: Prompts::PromptBuilder).void }
+    sig { params(prompt_builder: Prompts::SingletonPromptBuilder).void }
     def initialize(prompt_builder)
       raise MissingParameterValueError, "Missing parameters #{prompt_builder.missing_parameters.join(", ")}" unless prompt_builder.missing_parameters.empty?
       @messages = prompt_builder.parsed_messages

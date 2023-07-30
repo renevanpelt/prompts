@@ -1,6 +1,6 @@
 require 'example_helper'
 
-class TranslateToEnglish < Prompts::PromptBuilder
+class TranslateToEnglish < Prompts::SingletonPromptBuilder
 
   system 'You are a helpful assistant that translates any text to English.'
   user 'Translate "hello" to Spanish.'

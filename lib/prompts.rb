@@ -2,7 +2,7 @@
 # typed: false
 
 require 'sorbet-runtime'
-require_relative 'prompts/prompt_builder'
+require_relative 'prompts/singleton_prompt_builder'
 require_relative 'prompts/message_builder'
 require_relative 'prompts/function'
 require_relative 'prompts/parser'

@@ -2,7 +2,7 @@
 # typed: true
 
 module Prompts
-  class PromptBuilder
+  class SingletonPromptBuilder
     extend T::Sig
 
     attr_accessor :parameters

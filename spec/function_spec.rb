@@ -61,7 +61,7 @@ class NameParser < Prompts::Function
   # returns :first_name, :last_name, :initials
 end
 
-class ExtractNameFields < Prompts::PromptBuilder
+class ExtractNameFields < Prompts::SingletonPromptBuilder
   function NameParser
   parameter :full_name, :string, "The full name that is to be parsed"
 end
