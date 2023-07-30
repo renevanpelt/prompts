@@ -9,6 +9,8 @@ require_relative 'prompts/parser'
 require_relative 'prompts/prompt'
 require_relative 'prompts/function_parameter'
 require_relative 'prompts/function_return_value'
+require_relative 'prompts/non_deterministic_function'
+require_relative 'prompts/deterministic_function'
 
 module Prompts
 
