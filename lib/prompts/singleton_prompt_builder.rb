@@ -2,6 +2,26 @@
 # typed: true
 
 module Prompts
+
+  class PromptBuilder
+
+    def parameter_values
+      @parameter_values ||= {}
+    end
+
+    def parameters
+      @parameters ||= []
+    end
+
+    def functions
+      @functions ||= []
+    end
+
+    def message_builders
+      @message_builders ||= []
+    end
+  end
+
   class SingletonPromptBuilder
     extend T::Sig
 
@@ -88,8 +108,12 @@ module Prompts
     class << self
       extend T::Sig
 
+      def builder
+        @builder ||= Prompts::PromptBuilder.new
+      end
+
       def message_builders
-        @messages ||= []
+        builder.message_builders ||= []
       end
 
       sig { params(content: String).void }
