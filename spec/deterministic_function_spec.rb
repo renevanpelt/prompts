@@ -9,4 +9,8 @@ RSpec.describe Prompts::NonDeterministicFunction do
     end
   end
 
+  describe '.return_fields' do
+
+  end
+
 end

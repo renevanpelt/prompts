@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 # typed: true
+
 module Prompts
 
   class Function
@@ -23,13 +26,21 @@ module Prompts
         sym_name = name.to_sym
         validate_name(sym_name)
         raise NameAlreadyTakenError, "Name already taken" if @@names.include?(sym_name)
+
         @@names << sym_name
         @internal_name = sym_name
       end
 
       sig { returns(Symbol) }
       def internal_name
-        @internal_name ||= snake_case(self.to_s.split('::').last).to_sym
+        constant_name = T.let(to_s, String)
+        parts = T.let(constant_name.split('::'), T::Array[String])
+        raise StandardError, 'Invalid class name' if parts.empty?
+
+        class_name = parts.last
+
+
+        @internal_name ||= snake_case(class_name).to_sym
       end
 
       sig { params(description: T.nilable(String)).returns(String) }
@@ -38,10 +49,12 @@ module Prompts
         return @description
       end
 
+      sig { returns(T::Array[FunctionParameter]) }
       def parameters
         @parameters ||= []
       end
 
+      # sig { params(name_or_object: T.any(Symbol, FunctionParameter), kwargs: T::Hash[Symbol, T.untyped]).void }
       def parameter(name_or_object, **kwargs)
         case name_or_object
         when Symbol
@@ -55,14 +68,17 @@ module Prompts
         parameters << obj
       end
 
+      sig { params(arguments: T::Hash[Symbol, T.untyped]).returns(T::Boolean) }
       def validate(arguments)
-        !parameters.select { |a| a.required }.select { |a| arguments.has_key?(a.name) }.any?
+        parameters.select { |a| a.required }.select { |a| arguments.has_key?(a.name) }.none?
       end
 
       private
 
-      sig { params(str: String).returns(String) }
+      sig { params(str: T.nilable(String)).returns(String) }
       def snake_case(str)
+        return nil unless str
+
         str.gsub(/::/, '/')
            .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
            .gsub(/([a-z\d])([A-Z])/, '\1_\2')

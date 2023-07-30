@@ -21,7 +21,7 @@ module Prompts
 
     def initialize(content, kwargs = {})
       raise StandardError, 'Only child classes can be initialized' if self.instance_of?(Prompts::MessageBuilder)
-      this.function = kwargs[:function] if role == :user_function
+      # this.function = kwargs[:function] if role == :user_function
       self.content = content
       self.parameter_requirements = []
     end

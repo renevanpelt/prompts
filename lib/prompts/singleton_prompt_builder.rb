@@ -76,6 +76,7 @@ module Prompts
     sig { params(user_message: String, input_parameters: T::Hash[Symbol, String]).void }
     def invoke(user_message = "", input_parameters = {})
       raise MissingParameterValueError unless missing_parameters(input_parameters).empty?
+      raise
     end
 
     private def setter(param_name, value, sup)
@@ -146,8 +147,8 @@ module Prompts
         add_message(:user, content)
       end
 
-      def user_function(function)
-        add_message(:user_function, function)
+      def user_function(function_instance)
+        add_message(:user_function, function_instance)
       end
 
       sig { params(content: String).void }
@@ -165,17 +166,18 @@ module Prompts
           klass = Prompts::SystemMessage
         when :user_function
           klass = Prompts::UserFunctionMessage
-          kwargs[:function] = content
+          kwgs[:function] = content
         when :assistant
           klass = Prompts::AssistantMessage
         else
           raise StandardError, 'Invalid role'
         end
         message_builders.push klass.new(content, kwgs)
-
-        parsed_message = Parser.new(content)
-        parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
-          parameter(param_name)
+        if content.is_a?(String)
+          parsed_message = Parser.new(content)
+          parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
+            parameter(param_name)
+          end
         end
 
       end

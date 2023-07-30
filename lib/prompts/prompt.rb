@@ -9,11 +9,14 @@ module Prompts
 
     sig { params(prompt_builder: Prompts::SingletonPromptBuilder).void }
     def initialize(prompt_builder)
+
       raise MissingParameterValueError, "Missing parameters #{prompt_builder.missing_parameters.join(", ")}" unless prompt_builder.missing_parameters.empty?
-      @messages = prompt_builder.parsed_messages
-      @functions = prompt_builder.class.functions
+
+      @messages = T.let(prompt_builder.parsed_messages, T::Array[Prompts::Message])
+      @functions = T.let(prompt_builder.class.functions, T::Array[T::Class[Prompts::Function]])
     end
 
+    sig { returns(T::Hash[Symbol, T::Array[T.untyped]]) }
     def to_hash
       {
         messages: @messages.map(&:to_hash),

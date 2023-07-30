@@ -6,6 +6,14 @@ class Prompts::NonDeterministicFunction < Prompts::Function
     :non_deterministic
   end
 
+  def initialize(arguments)
+    @arguments = arguments
+  end
+
+  def invoke
+    self
+  end
+
   class << self
 
 
@@ -22,8 +30,7 @@ class Prompts::NonDeterministicFunction < Prompts::Function
 
     # Takes keyword arguments
     def invoke(**kwargs)
-      builder_klass = Promp
-      new(**kwargs).invoke
+      new(kwargs).invoke
     end
 
   end
