@@ -175,7 +175,7 @@ module Prompts
       end
 
       def parameters
-        @parameters ||= []
+        builder.parameters
       end
 
       sig { params(name: Symbol, type: T.untyped, description: String).void }
