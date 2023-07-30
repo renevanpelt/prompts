@@ -1,28 +1,14 @@
 require 'spec_helper'
 
-class TranslateToEnglish < Prompts::SingletonPromptBuilder
-  system 'You are a helpful assistant that translates any text to English.'
-  user 'Translate "hello" to Spanish.'
-  assistant 'This is not the kind of question I am expecting.'
-  user 'Translate "Hola"'
-  assistant 'Hello'
-end
+require_relative '../examples/functions/word_count'
 
-class TranslateTo < Prompts::SingletonPromptBuilder
-  system 'You are a helpful assistant that translates any text to {{target_language}}.'
-  with_parameter :target_language, "Spanish" do |language|
-    user 'Translate "hello"'
-    assistant 'Hello'
-  end
+require_relative '../examples/prompts/translate_to_english'
+require_relative '../examples/prompts/translate_to'
+require_relative '../examples/prompts/tell_me_the_opposite'
+require_relative '../examples/prompts/simple_parameter_prompt'
+require_relative '../examples/prompts/word_count_function_prompt'
 
-  user 'Translate "Hola"'
-  assistant 'Hello'
-  parameter :foo, :string, "A description for foo."
-end
 
-class Translate < Prompts::SingletonPromptBuilder
-
-end
 
 describe Prompts::SingletonPromptBuilder do
   let(:translate_to_english) { TranslateToEnglish.new }
@@ -127,20 +113,12 @@ describe Prompts::SingletonPromptBuilder do
   end
 end
 
-class SimpleOppositePrompt < Prompts::SingletonPromptBuilder
-
-  system 'You tell the opposite of what people are saying.'
-  user 'The sun is round'
-  system 'the sun is a square'
-
-end
-
 describe Prompts::SingletonPromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case' do
 
-      p = SimpleOppositePrompt.new
+      p = TellMeTheOpposite.new
 
       expected_hash = {
         functions: [],
@@ -167,12 +145,6 @@ describe Prompts::SingletonPromptBuilder do
   end
 end
 
-class SimpleParameterPrompt < Prompts::SingletonPromptBuilder
-
-  system 'You respond in dutch, whatever language the user speaks in'
-  user 'Tell me something about {{topic}}'
-
-end
 
 describe Prompts::SingletonPromptBuilder do
 
@@ -190,27 +162,13 @@ describe Prompts::SingletonPromptBuilder do
   end
 end
 
-class WordCount < Prompts::Function
-  name "word_count"
-  description "Counts the number of words in a string"
-  parameter :string,
-            required: true,
-            type: :string,
-            description: "A string of which the words are to be counted"
-end
-
-class MyWordCountFunctionPrompt < Prompts::SingletonPromptBuilder
-  function WordCount
-  system 'You help me count words'
-  user 'How many words am I saying in this message?'
-end
 
 describe Prompts::SingletonPromptBuilder do
 
   describe '#to_hash' do
     it 'should give a correct hash in a simple case with a function' do
 
-      p = MyWordCountFunctionPrompt.new
+      p = WordCountFunctionPrompt.new
       expected_hash = { :messages => [{ :role => :system, :content => "You help me count words" }, { :role => :user, :content => "How many words am I saying in this message?" }], :functions => [{:description=>"Counts the number of words in a string", :name=>:word_count, :parameters=>{:properties=>{:string=>{:description=>"A string of which the words are to be counted", :type=>:string}}, :type=>:object}}] }
 
       expect(p.to_prompt.to_hash).to eq(expected_hash)
