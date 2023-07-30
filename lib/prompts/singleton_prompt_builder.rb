@@ -20,41 +20,57 @@ module Prompts
     def message_builders
       @message_builders ||= []
     end
+
+    def message_builders=(value)
+      @message_builders = value
+    end
   end
 
   class SingletonPromptBuilder
     extend T::Sig
 
-    attr_accessor :parameters
+    # attr_accessor :parameters
 
     def initialize
       super
-      @parameters = {}
+      # @parameters = {}
+    end
+
+    def parameters
+      builder.parameter_values
+    end
+
+    def parameter_values
+      builder.parameter_values
+    end
+
+    def builder
+      @builder ||= self.class.builder.dup
     end
 
     def parsed_messages
-      self.class.message_builders.map{ |m| Prompts::Message.new(role: m.role, content: m.parse(parameters)) }
+      builder.message_builders.map{ |m| Prompts::Message.new(role: m.role, content: m.parse(parameters)) }
     end
 
     sig { returns(T::Array[Hash]) }
     def system_messages
-      self.class.message_builders.select { |m| m.is_a?(Prompts::SystemMessage) }
+      builder.message_builders.select { |m| m.is_a?(Prompts::SystemMessage) }
     end
 
     sig { returns(T::Array[Hash]) }
     def user_messages
-      self.class.message_builders.select { |m| m.is_a?(Prompts::UserMessage) }
+      builder.message_builders.select { |m| m.is_a?(Prompts::UserMessage) }
     end
 
     sig { returns(T::Array[Hash]) }
     def assistant_messages
-      self.class.message_builders.select { |m| m.is_a?(Prompts::AssistantMessage) }
+      builder.message_builders.select { |m| m.is_a?(Prompts::AssistantMessage) }
     end
 
     sig { params(input_parameters: T::Hash[Symbol, String]).returns(T::Array[Hash]) }
     def missing_parameters(input_parameters = {})
       input_parameters = input_parameters.merge(parameters)
-      self.class.parameters.select { |p| input_parameters[p[:label]].nil? }
+      builder.parameters.select { |p| input_parameters[p[:label]].nil? }
     end
 
     sig { params(user_message: String, input_parameters: T::Hash[Symbol, String]).void }
@@ -63,20 +79,20 @@ module Prompts
     end
 
     private def setter(param_name, value, sup)
-      param = self.class.parameters.find { |p| p[:label] == param_name }
+      param = builder.parameters.find { |p| p[:label] == param_name }
       if param.nil?
         sup.call
       else
-        @parameters[param_name] = value
+        parameter_values[param_name] = value
       end
     end
 
     private def getter(param_name, sup)
-      param = self.class.parameters.find { |p| p[:label] == param_name }
+      param = builder.parameters.find { |p| p[:label] == param_name }
       if param.nil?
         sup.call
       else
-        @parameters[param_name]
+        parameter_values[param_name]
       end
     end
 
@@ -87,17 +103,17 @@ module Prompts
       else
         super if args.any?
         param_name = method
-        getter(param_name.to_sym, proc { super })
+          getter(param_name.to_sym, proc { super })
       end
     end
 
     def respond_to_missing?(method, include_all = false)
       if method[-1] == '='
         param_name = method[0..-2].to_sym
-        self.class.parameters.any? { |param| param[:label] == param_name } || super
+        builder.parameters.any? { |param| param[:label] == param_name } || super
       else
         param_name = method
-        self.class.parameters.any? { |param| param[:label] == param_name } || super
+        builder.parameters.any? { |param| param[:label] == param_name } || super
       end
     end
 
@@ -110,6 +126,10 @@ module Prompts
 
       def builder
         @builder ||= Prompts::PromptBuilder.new
+      end
+
+      def message_builders=(value)
+        @message_builders = value
       end
 
       def message_builders
@@ -159,20 +179,20 @@ module Prompts
         end
 
       end
-      #
-      # sig { params(label: Symbol, value: String, block: T.proc.void).void }
-      # def with_parameter(label, value, &block)
-      #   # parameters << { name: name, default: default }
-      #   temp_messages = @messages # Store existing messages
-      #   @messages = [] # Reset @messages for capturing the ones inside the block
-      #   self.instance_eval(&block)
-      #   parameter_messages = @messages # These are the messages inside the block
-      #   @messages = temp_messages # Restore existing messages
-      #   parameter_messages.each do |message|
-      #     message.parameter_requirements << { label: label, value: value }
-      #     @messages << message
-      #   end
-      # end
+
+      sig { params(label: Symbol, value: String, block: T.proc.void).void }
+      def with_parameter(label, value, &block)
+        temp_messages = builder.message_builders # Store existing messages
+        builder.message_builders = [] # Reset message_builders for capturing the ones inside the block
+        self.instance_eval(&block)
+        parameter_messages = builder.message_builders # These are the messages inside the block
+        builder.message_builders = temp_messages # Restore existing messages
+        parameter_messages.each do |message|
+          message.parameter_requirements << { label: label, value: value }
+          builder.message_builders << message
+        end
+      end
+
 
       def parameters
         builder.parameters

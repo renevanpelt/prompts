@@ -10,10 +10,11 @@ end
 
 class TranslateTo < Prompts::SingletonPromptBuilder
   system 'You are a helpful assistant that translates any text to {{target_language}}.'
-  # with_parameter :target_language, "Spanish" do |language|
-  #   user 'Translate "hello"'
-  #   assistant 'Hello'
-  # end
+  with_parameter :target_language, "Spanish" do |language|
+    user 'Translate "hello"'
+    assistant 'Hello'
+  end
+
   user 'Translate "Hola"'
   assistant 'Hello'
   parameter :foo, :string, "A description for foo."
@@ -192,7 +193,10 @@ end
 class WordCount < Prompts::Function
   name "word_count"
   description "Counts the number of words in a string"
-  parameter :string, required: true, type: :string, description: "A string containing words", :functions => []
+  parameter :string,
+            required: true,
+            type: :string,
+            description: "A string of which the words are to be counted"
 end
 
 class MyWordCountFunctionPrompt < Prompts::SingletonPromptBuilder
@@ -207,7 +211,7 @@ describe Prompts::SingletonPromptBuilder do
     it 'should give a correct hash in a simple case with a function' do
 
       p = MyWordCountFunctionPrompt.new
-      expected_hash = { :messages => [{ :role => :system, :content => "You help me count words" }, { :role => :user, :content => "How many words am I saying in this message?" }], :functions => [{ :name => :word_count, :description => "Counts the number of words in a string", :parameters => { :type => :object, :properties => { :string => { :type => :string, :description => "A string containing words" } } } }] }
+      expected_hash = { :messages => [{ :role => :system, :content => "You help me count words" }, { :role => :user, :content => "How many words am I saying in this message?" }], :functions => [{:description=>"Counts the number of words in a string", :name=>:word_count, :parameters=>{:properties=>{:string=>{:description=>"A string of which the words are to be counted", :type=>:string}}, :type=>:object}}] }
 
       expect(p.to_prompt.to_hash).to eq(expected_hash)
 
