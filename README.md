@@ -1,10 +1,7 @@
 # prompts
 
-This projects aims to provide a DLS for designing prompts. The goal is to enable developers to create complex prompts in a maintainable way.
-
-
-
-Usage:
+This projects aims to provide a DLS for designing prompts. The goal is to enable developers to create complex prompts in
+a maintainable way.
 
 ## Building a simple chat prompt
 
@@ -89,9 +86,12 @@ Functions in the OpenAI API can be used in several ways:
 
 ### Making and using a Function class (The OpenAI API way)
 
-Defining function classes requires at least a `name` and a `description`. 
+Defining function classes requires at least a `name` and a `description`.
 
-You can also define one or more `parameter`s. We follow the structure of the OpenAI API, however, since they do not seem to make a semantic separation between receiving function call orders from the model and using the model as a function. We have added two more classes and some syntactic sugar to make this distinction. More about `DeterministicFunction` and `NonDeterministicFunction` later.
+You can also define one or more `parameter`s. We follow the structure of the OpenAI API, however, since they do not seem
+to make a semantic separation between receiving function call orders from the model and using the model as a function.
+We have added two more classes and some syntactic sugar to make this distinction. More about `DeterministicFunction`
+and `NonDeterministicFunction` later.
 
 We start off with the Weather API example from the OpenAI API documentation.
 
@@ -102,10 +102,9 @@ class GetCurrentWeather < Prompts::Function
   description "Gets the current weather for a given location."
 
   parameter :location, required: true, type: :string, description: "A string containing a location, e.g. 'Amsterdam'"
-  parameter :unit, required: true, type: :string,  enum: [:celsius, :fahrenheit], description: "The unit of temperature to return the weather in. Infer this from the users location"
-  
-end
+  parameter :unit, required: true, type: :string, enum: [:celsius, :fahrenheit], description: "The unit of temperature to return the weather in. Infer this from the users location"
 
+end
 
 class FunctionCallForWeather < Prompts::PromoptBuilder
   function GetCurrentWeather
@@ -119,6 +118,7 @@ end
 We created the function and provided it to our beautifully named `FunctionCallForWeather` prompt builder.
 
 We will now build the prompt, by providing a location through the dynamic `location` setter.
+
 ```ruby
 
 @function_call_builder = FunctionCallForWeather.new
@@ -128,7 +128,6 @@ We will now build the prompt, by providing a location through the dynamic `locat
 
 # => #<Prompts::Prompt:0x0000000104508020>
 
-
 @prompt.to_hash
 
 # => {:messages=>[{:role=>:system, :content=>"Tell me what the current weather is in Paris, France"}], :functions=>[{:name=>:get_current_weather, :description=>"Gets the current weather for a given location.", :parameters=>{:type=>:object, :properties=>{:location=>{:type=>:string, :description=>"A string containing a location, e.g. 'Amsterdam'"}, :unit=>{:type=>:string, :description=>"The unit of temperature to return the weather in. Infer this from the users location"}}}}]}
@@ -136,7 +135,8 @@ We will now build the prompt, by providing a location through the dynamic `locat
 
 ```
 
-We use this prompt to in a call to the OpenAI API. In this example we use [ruby-openai by alexrudall](https://github.com/alexrudall/ruby-openai) to do so.
+We use this prompt to in a call to the OpenAI API. In this example we
+use [ruby-openai by alexrudall](https://github.com/alexrudall/ruby-openai) to do so.
 
 In future implementations, doing API calls to several providers should probably be within the scope of this project.
 
@@ -189,14 +189,12 @@ Which renders the following response
 
 We then use the response get information from our external API
 
-
-
 ```ruby
 
 
 class ExternalWeatherMockAPI
   def self.response(location, unit)
-    { temperature: rand(0..30), rain_chance: "10%", unit: unit, location: location}
+    { temperature: rand(0..30), rain_chance: "10%", unit: unit, location: location }
   end
 end
 
@@ -218,7 +216,6 @@ end
 
 ```
 
-
 Now we define a PropmtBuilder that uses the response from the API to build a response to the user.
 
 ```ruby
@@ -236,14 +233,12 @@ end
 current_weather_builder = CurrentWeather.new
 current_weather_builder.api_response = api_response
 
-
 hash = current_weather_builder.to_prompt.to_hash
 
 
 ```
 
 Again, we do an API call
-
 
 ```ruby
 response = client.chat(
@@ -260,139 +255,20 @@ puts response = response.dig("choices", 0, "message", "content")
 
 ```
 
-
 ### Making and using a Function class (The other way)
 
 
+### Using the models as non-deterministic functions
 
-[//]: # ()
-[//]: # (```ruby)
 
-[//]: # (class NameParser < Prompts::Function)
 
-[//]: # ()
-[//]: # (  name :name_parser # optional: can be generated based on class name)
 
-[//]: # (  description "Parses a full name into first name, last name and initials.")
 
-[//]: # ()
-[//]: # (  # Define a parameter on one line)
 
-[//]: # (  parameter :full_name, required: true, type: :string, description: "A string containing a full name, e.g. 'John F. Doe'")
 
-[//]: # ()
-[//]: # (  returns :first_name, :last_name, :initials)
 
-[//]: # (  # Or equivalently:)
 
-[//]: # (  # parameter do)
 
-[//]: # (  #   label: :full_name)
-
-[//]: # (  #   required: true)
-
-[//]: # (  #   type: :string)
-
-[//]: # (  #   description: "A string containing a full name, e.g. 'John F. Doe'")
-
-[//]: # (  #   # default: nil)
-
-[//]: # (  # end)
-
-[//]: # ()
-[//]: # (end)
-
-[//]: # ()
-[//]: # (class ExtractNameFields < Prompts::PromptBuilder)
-
-[//]: # ()
-[//]: # (  function NameParser)
-
-[//]: # ()
-[//]: # (  system """)
-
-[//]: # (        You are an agent that can )
-
-[//]: # (        be interacted with though )
-
-[//]: # (        natural language, but you )
-
-[//]: # (        in the structure of the arguments )
-
-[//]: # (        of the provided function)
-
-[//]: # (        " "")
-
-[//]: # ()
-[//]: # (  user Function.invoke&#40;full_name: "John F. Doe"&#41;)
-
-[//]: # ()
-[//]: # (  system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}")
-
-[//]: # ()
-[//]: # (end)
-
-[//]: # ()
-[//]: # (prompt = ExtractNameFields.new)
-
-[//]: # ()
-[//]: # (prompt.invoke&#40;NameParser.new&#40;full_name: "John F. Doe"&#41;&#41;)
-
-[//]: # ()
-[//]: # (```)
-
-[//]: # ()
-[//]: # (Or, equivalently:)
-
-[//]: # ()
-[//]: # (```ruby)
-
-[//]: # ()
-[//]: # (class ExtractNameFields < Prompts::PromptBuilder)
-
-[//]: # ()
-[//]: # (  function NameParser)
-
-[//]: # ()
-[//]: # (  parameter :full_name, :string, "The full name that is to be parsed" # This is optional, but recommended.)
-
-[//]: # ()
-[//]: # (  system "" ")
-
-[//]: # (        ...)
-
-[//]: # (        " "")
-
-[//]: # ()
-[//]: # (  user NameParser.invoke&#40;full_name: "John F. Doe"&#41;)
-
-[//]: # (  system "{first_name: 'John', last_name: 'Doe', initials: 'JFD'}")
-
-[//]: # ()
-[//]: # (  user NameParser.invoke&#40;full_name: full_name&#41;)
-
-[//]: # ()
-[//]: # (  # Or equivalently, to prevent name clashes)
-
-[//]: # (  # user Function.invoke&#40;full_name: :full_name&#41;)
-
-[//]: # ()
-[//]: # (end)
-
-[//]: # ()
-[//]: # (prompt = ExtractNameFields.new)
-
-[//]: # ()
-[//]: # (prompt.full_name = "John F. Doe")
-
-[//]: # ()
-[//]: # (prompt.invoke)
-
-[//]: # ()
-[//]: # (```)
-
-[//]: # ()
-[//]: # (In the last example, we made the last user message dependent on the `full_name` parameter.)
 
 ## Tests
 
