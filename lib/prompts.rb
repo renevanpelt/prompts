@@ -30,6 +30,13 @@ module Prompts
     end
   end
 
+  class UserFunctionMessage < Prompts::MessageBuilder
+    attr_accessor :function
+    def role
+      :user_function
+    end
+  end
+
   class AssistantMessage < Prompts::MessageBuilder
     def role
       :assistant

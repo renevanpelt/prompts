@@ -19,10 +19,10 @@ module Prompts
 
     attr_accessor :content, :parameter_requirements
 
-    sig { params(content: String).void }
-    def initialize(content)
+    # sig { params(content: String).void }
+    def initialize(content, kwargs = {})
       raise StandardError, 'Only child classes can be initialized' if self.instance_of?(Prompts::MessageBuilder)
-
+      this.function = kwargs[:function] if role == :user_function
       self.content = content
       self.parameter_requirements = []
     end

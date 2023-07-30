@@ -102,24 +102,32 @@ module Prompts
         add_message(:user, content)
       end
 
+      def user_function(function)
+        add_message(:user_function, function)
+      end
+
       sig { params(content: String).void }
       def assistant(content)
         add_message(:assistant, content)
       end
 
-      sig { params(role: Symbol, content: String).void }
+      sig { params(role: Symbol, content: T.any(String,Prompts::Function)).void }
       def add_message(role, content)
+        kwgs = {  }
         case role
         when :user
           klass = Prompts::UserMessage
         when :system
           klass = Prompts::SystemMessage
+        when :user_function
+          klass = Prompts::UserFunctionMessage
+          kwargs[:function] = content
         when :assistant
           klass = Prompts::AssistantMessage
         else
           raise StandardError, 'Invalid role'
         end
-        message_builders.push klass.new(content)
+        message_builders.push klass.new(content, kwgs)
 
         parsed_message = Parser.new(content)
         parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|

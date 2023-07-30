@@ -19,6 +19,10 @@ class Prompts::NonDeterministicFunction < Prompts::Function
       end
     end
 
+    def invoke(**kwargs)
+
+    end
+
   end
 
 end
