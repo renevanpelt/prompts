@@ -39,7 +39,6 @@ module Prompts
 
         class_name = parts.last
 
-
         @internal_name ||= snake_case(class_name).to_sym
       end
 

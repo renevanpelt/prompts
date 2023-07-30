@@ -5,10 +5,10 @@ class Prompts::NonDeterministicFunction < Prompts::Function
   def type
     :non_deterministic
   end
-
-  def initialize(arguments)
-    @arguments = arguments
-  end
+  #
+  # def initialize(arguments)
+  #   @arguments = arguments
+  # end
 
   def invoke
     self

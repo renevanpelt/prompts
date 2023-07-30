@@ -29,13 +29,6 @@ module Prompts
   class SingletonPromptBuilder
     extend T::Sig
 
-    # attr_accessor :parameters
-
-    def initialize
-      super
-      # @parameters = {}
-    end
-
     def parameters
       builder.parameter_values
     end
