@@ -187,7 +187,7 @@ module Prompts
       end
 
       def functions
-        @functions ||= []
+        builder.functions
       end
 
       def function(function)
