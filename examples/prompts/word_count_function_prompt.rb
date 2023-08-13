@@ -1,4 +1,3 @@
-
 class WordCountFunctionPrompt < Prompts::SingletonPromptBuilder
   function WordCount
   system 'You help me count words'

@@ -11,6 +11,7 @@ require_relative 'prompts/function_parameter'
 require_relative 'prompts/function_return_value'
 require_relative 'prompts/non_deterministic_function'
 require_relative 'prompts/deterministic_function'
+require_relative 'prompts/prompt_response'
 
 module Prompts
 

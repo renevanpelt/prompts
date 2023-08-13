@@ -66,10 +66,11 @@ module Prompts
       builder.parameters.select { |p| input_parameters[p[:label]].nil? }
     end
 
-    sig { params(user_message: String, input_parameters: T::Hash[Symbol, String]).void }
+    sig { params(user_message: String, input_parameters: T::Hash[Symbol, String]).returns(Prompts::PromptResponse) }
     def invoke(user_message = "", input_parameters = {})
       raise MissingParameterValueError unless missing_parameters(input_parameters).empty?
-      raise
+
+      Prompts::PromptResponse.new
     end
 
     private def setter(param_name, value, sup)

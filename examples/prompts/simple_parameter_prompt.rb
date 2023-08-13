@@ -4,3 +4,4 @@ class SimpleParameterPrompt < Prompts::SingletonPromptBuilder
   user 'Tell me something about {{topic}}'
 
 end
+

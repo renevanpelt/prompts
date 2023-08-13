@@ -5,12 +5,17 @@ class Prompts::NonDeterministicFunction < Prompts::Function
   def type
     :non_deterministic
   end
-  #
-  # def initialize(arguments)
-  #   @arguments = arguments
-  # end
+
+  def self.new_with_arguments(arguments)
+    object = new
+    object.arguments = arguments
+    object
+  end
+
+  attr_writer :arguments
 
   def invoke
+    puts "boo"
     self
   end
 
@@ -30,7 +35,8 @@ class Prompts::NonDeterministicFunction < Prompts::Function
 
     # Takes keyword arguments
     def invoke(**kwargs)
-      new(kwargs).invoke
+      puts "we get here"
+      new_with_arguments(kwargs).invoke
     end
 
   end

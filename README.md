@@ -96,7 +96,6 @@ and `NonDeterministicFunction` later.
 We start off with the Weather API example from the OpenAI API documentation.
 
 ```ruby
-
 class GetCurrentWeather < Prompts::Function
   name :get_current_weather # optional, automatically generated based on class name
   description "Gets the current weather for a given location."
@@ -112,7 +111,6 @@ class FunctionCallForWeather < Prompts::PromoptBuilder
 
   system "Tell me what the current weather is in {{location}}"
 end
-
 ```
 
 We created the function and provided it to our beautifully named `FunctionCallForWeather` prompt builder.
