@@ -89,7 +89,8 @@ describe ExtractNameFields do
   end
 
   it 'should have a parameter :full_name' do
-    expect(ExtractNameFields.parameters).to include({label: :full_name, type: :string, description: "The full name that is to be parsed"})
+
+    expect(ExtractNameFields.parameters).to include({label: :full_name,:message_builders=>[], type: :string, description: "The full name that is to be parsed"})
   end
 end
 

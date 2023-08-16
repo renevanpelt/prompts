@@ -13,7 +13,7 @@ describe Prompts::SingletonPromptBuilder do
 
   describe '.parameter' do
     it 'stores parameter information' do
-      expect(translate_to.class.parameters).to include({ label: :foo, type: :string, description: "A description for foo." })
+      expect(translate_to.class.parameters).to include({ label: :foo, :message_builders => [], type: :string, description: "A description for foo." })
     end
   end
 
@@ -30,7 +30,7 @@ describe Prompts::SingletonPromptBuilder do
 
     it 'returns empty array when all parameters are present' do
       translate_to.target_language = 'Spanish'
-      expect(translate_to.missing_parameters).to eq([{ :label => :foo, :type => :string, :description => "A description for foo." }])
+      expect(translate_to.missing_parameters).to eq([{ :label => :foo, :message_builders => [], :type => :string, :description => "A description for foo." }])
 
       translate_to.foo = 'Bar'
       expect(translate_to.missing_parameters).to eq([])
@@ -39,7 +39,7 @@ describe Prompts::SingletonPromptBuilder do
 
   describe '.[parameter_name]' do
     it 'returns parameter hash when the correct one is called' do
-      expect(translate_to.class.foo).to eq({ label: :foo, type: :string, description: "A description for foo." })
+      expect(translate_to.class.foo).to eq({ label: :foo, :message_builders => [], type: :string, description: "A description for foo." })
     end
 
     it 'doesnt respond when method name is not a parameter label' do

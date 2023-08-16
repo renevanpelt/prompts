@@ -24,6 +24,10 @@ module Prompts
     def message_builders=(value)
       @message_builders = value
     end
+
+    def add_parameter(label, type, description = "", message_builders = nil)
+      parameters << { label: label, type: type, description: description, message_builders: message_builders }
+    end
   end
 
   class SingletonPromptBuilder
@@ -42,7 +46,7 @@ module Prompts
     end
 
     def parsed_messages
-      builder.message_builders.map{ |m| Prompts::Message.new(role: m.role, content: m.parse(parameters)) }
+      builder.message_builders.map { |m| Prompts::Message.new(role: m.role, content: m.parse(parameters)) }
     end
 
     sig { returns(T::Array[Hash]) }
@@ -98,7 +102,7 @@ module Prompts
       else
         super if args.any?
         param_name = method
-          getter(param_name.to_sym, proc { super })
+        getter(param_name.to_sym, proc { super })
       end
     end
 
@@ -141,6 +145,12 @@ module Prompts
         add_message(:user, content)
       end
 
+      def every(item_identifier, &block)
+        @item_identifier = item_identifier
+        instance_eval(&block)
+        @item_identifier = nil
+      end
+
       def user_function(function_instance)
         add_message(:user_function, function_instance)
       end
@@ -150,9 +160,9 @@ module Prompts
         add_message(:assistant, content)
       end
 
-      sig { params(role: Symbol, content: T.any(String,Prompts::Function)).void }
+      sig { params(role: Symbol, content: T.any(String, Prompts::Function)).void }
       def add_message(role, content)
-        kwgs = {  }
+        kwgs = {}
         case role
         when :user
           klass = Prompts::UserMessage
@@ -166,11 +176,27 @@ module Prompts
         else
           raise StandardError, 'Invalid role'
         end
-        message_builders.push klass.new(content, kwgs)
-        if content.is_a?(String)
-          parsed_message = Parser.new(content)
-          parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
-            parameter(param_name)
+
+        if @item_identifier
+          puts @item_identifier
+          puts "found"
+          puts builder.parameters
+          parameter = builder.parameters.find { |p| p[:label] == @item_identifier && p[:type] == :collection }
+          if parameter.nil?
+            parameter(@item_identifier, :collection, "",  [])
+          end
+          parameter = builder.parameters.find { |p| p[:label] == @item_identifier && p[:type] == :collection }
+          puts parameter
+          parameter[:message_builders].push(klass.new(content, kwgs))
+
+        else
+
+          message_builders.push klass.new(content, kwgs)
+          if content.is_a?(String)
+            parsed_message = Parser.new(content)
+            parsed_message.parameter_names.select { |param_name| !parameters.any? { |param| param[:label] == param_name } }.each do |param_name|
+              parameter(param_name)
+            end
           end
         end
 
@@ -189,14 +215,13 @@ module Prompts
         end
       end
 
-
       def parameters
         builder.parameters
       end
 
-      sig { params(name: Symbol, type: T.untyped, description: String).void }
-      def parameter(name, type = :untyped, description = "")
-        parameters << { label: name, type: type, description: description }
+      # sig { params(name: Symbol, type: T.untyped, description: String, message_builders: T.any).void }
+      def parameter(name, type = :untyped, description = "", message_builders = [])
+        builder.add_parameter(name, type, description, message_builders)
         define_method("#{name}=") do |value|
           parameters[name] = value
         end
