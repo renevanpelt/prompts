@@ -7,6 +7,8 @@ describe Prompts::SingletonPromptBuilder do
   describe '#every' do
     it 'finds a collection parameter' do
       expect( collection_prompt.user_messages.count).to be(1)
+
+      collection_parameters = collection_prompt.class.collection_parameters
     end
 
     it 'finds a regular parameter' do
