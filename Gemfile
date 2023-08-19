@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gemspec
 gem 'rspec', :group => :development
 gem 'sorbet', :group => :development
 gem 'tapioca'

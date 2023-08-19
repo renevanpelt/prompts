@@ -1,3 +1,13 @@
+PATH
+  remote: .
+  specs:
+    prompts (0.1.0)
+      rspec
+      ruby-openai
+      sorbet
+      sorbet-runtime
+      tapioca
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -75,6 +85,7 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  prompts!
   rspec
   ruby-openai
   sorbet
