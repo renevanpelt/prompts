@@ -18,10 +18,16 @@ module Prompts
 
     sig { returns(T::Hash[Symbol, T::Array[T.untyped]]) }
     def to_hash
-      {
+      a = {
         messages: @messages.map(&:to_hash),
-        functions: @functions.map { |f| f.new.to_hash }
       }
+
+      if @functions.any?
+        a.merge!({
+                   functions: @functions.map(&:to_hash)
+                 })
+      end
+
     end
 
   end
