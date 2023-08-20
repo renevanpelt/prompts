@@ -28,6 +28,8 @@ module Prompts
                  })
       end
 
+      return a
+
     end
 
   end
